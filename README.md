@@ -1,6 +1,14 @@
+# Video Demo
+
+[![Video Title](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
+
+
+
+
+
 # Interactive Notebook System
 
-Inspired by [Open Notebook](https://www.open-notebook.ai/), this Streamlit-based application lets users upload PDFs, extract key content, and generate personalized study plans with minimal manual input.
+Inspired by Notebook LM, this Streamlit-based application lets users upload PDFs, extract key content, and generate personalized study plans with minimal manual input.
 
 ## Features
 
@@ -29,3 +37,16 @@ Inspired by [Open Notebook](https://www.open-notebook.ai/), this Streamlit-based
 - **LLM Integration:** Langchain is used to prompt different LLM APIs, currently supporting Google Gemini, OpenAI, Anthropic, and Claude.  
 - **Database:** SurrealDB (Dockerized)
 
+
+## How to use
+Head over here: https://985e-138-238-254-99.ngrok-free.app
+
+
+## How to install
+
+```
+poetry install
+docker compose --profile db_only up
+poetry run streamlit run Auth.py
+
+```
