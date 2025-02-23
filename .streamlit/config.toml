@@ -1,0 +1,14 @@
+[server]
+port = 8052
+maxMessageSize = 500
+
+[browser]
+serverPort = 8052
+
+[theme]
+base = "light"
+primaryColor = "#3a3a3a"            # Change to "#000000" for a black background, then update --button-text-color to "#ffffff" in theme.py
+backgroundColor = "#ffffff"           # Light gray background for a clean, minimal look
+secondaryBackgroundColor = "#ffffff"  # Medium gray for sidebars and panels
+textColor = "#000000"                 # Dark gray text for general elements
+font = "sans serif"

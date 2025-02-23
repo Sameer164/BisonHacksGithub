@@ -1,0 +1,37 @@
+services:
+  surrealdb:
+    image: surrealdb/surrealdb:v2
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./surreal_data:/mydata
+    environment:
+      - SURREAL_EXPERIMENTAL_GRAPHQL=true
+    command: start --log info --user root --pass root rocksdb:/mydata/mydatabase.db
+    pull_policy: always
+    user: root
+    profiles: [db_only, multi]
+  open_notebook:
+    image: lfnovo/open_notebook:latest
+    ports:
+      - "8080:8502"
+    env_file:
+      - ./docker.env
+    depends_on:
+      - surrealdb
+    pull_policy: always
+    profiles: [multi]
+    volumes:
+      - ./notebook_data:/app/data
+  open_notebook_single:
+    build:
+      context: .
+      dockerfile: Dockerfile.single
+    ports:
+      - "8080:8502"
+    profiles:
+      - single
+    volumes:
+      - ./.docker_data/data:/app/data
+      - ./docker2.env:/app/.env
+      - ./google-credentials.json:/app/google-credentials.json
