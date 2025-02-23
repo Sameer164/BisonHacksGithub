@@ -8,7 +8,7 @@
 
 # Interactive Notebook System
 
-Inspired by Notebook LM, this Streamlit-based application lets users upload PDFs, extract key content, and generate personalized study plans with minimal manual input.
+Inspired by Notebook LM, this Streamlit-based application lets users upload PDFs, extract key content, and generate personalized study plans with minimal manual input. But in addition to the features provided by Notebook LM, we support splitting and distributing content over weeks incorporating spaced repetition, and ensuring that users get to learn what they want as effectively and quickly as possible. We also support various LLMs like OpenAI, Anthropic, Claude, and whisper, so the user can select the LLM best trained/suited for their needs. 
 
 ## Features
 
