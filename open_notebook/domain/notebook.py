@@ -76,9 +76,26 @@ class Notebook(ObjectModel):
                 [ChatSession(**src["chat_session"][0]) for src in srcs] if srcs else []
             )
         except Exception as e:
-            logger.error(f"Error fetching notes for notebook {self.id}: {str(e)}")
+            logger.error(f"Error fetching chat sessions for notebook {self.id}: {str(e)}")
             logger.exception(e)
             raise DatabaseOperationError(e)
+
+    def get_ui_representation(self) -> dict:
+        """
+        Returns a structured representation optimized for UI display.
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "archived": self.archived,
+            "sources_count": len(self.sources),
+            "notes_count": len(self.notes),
+            "chat_sessions_count": len(self.chat_sessions),
+            "sources": [src.get_ui_representation() for src in self.sources],
+            "notes": [note.get_ui_representation() for note in self.notes],
+            "chat_sessions": [chat.get_ui_representation() for chat in self.chat_sessions],
+        }
 
 
 class Asset(BaseModel):
@@ -154,6 +171,17 @@ class Source(ObjectModel):
         else:
             return dict(id=self.id, title=self.title, insights=insights)
 
+    def get_ui_representation(self) -> dict:
+        """
+        Returns a concise representation for UI purposes.
+        """
+        return {
+            "id": self.id,
+            "title": self.title,
+            "topics": self.topics,
+            "embedded_chunks": self.embedded_chunks,
+        }
+
     @property
     def embedded_chunks(self) -> int:
         try:
@@ -223,14 +251,11 @@ class Source(ObjectModel):
             # Process chunks in parallel while preserving order
             logger.info("Starting parallel processing of chunks")
             with ThreadPoolExecutor(max_workers=8) as executor:
-                # Create list of (index, chunk) tuples
                 chunk_tasks = list(enumerate(chunks))
-                # Process all chunks in parallel and get results
                 results = list(executor.map(process_chunk, chunk_tasks))
 
             logger.info(f"Parallel processing complete. Got {len(results)} results")
 
-            # Insert results in order (they're already ordered by index)
             for idx, embedding, content in results:
                 logger.debug(f"Inserting chunk {idx} into database")
                 repo_query(
@@ -305,11 +330,16 @@ class Note(ObjectModel):
                 content=self.content[:100] if self.content else None,
             )
 
-    def needs_embedding(self) -> bool:
-        return True
-
-    def get_embedding_content(self) -> Optional[str]:
-        return self.content
+    def get_ui_representation(self) -> dict:
+        """
+        Returns a brief note representation for UI display.
+        """
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content_preview": self.content[:100] if self.content else "",
+            "note_type": self.note_type,
+        }
 
 
 class ChatSession(ObjectModel):
@@ -320,6 +350,15 @@ class ChatSession(ObjectModel):
         if not notebook_id:
             raise InvalidInputError("Notebook ID must be provided")
         return self.relate("refers_to", notebook_id)
+
+    def get_ui_representation(self) -> dict:
+        """
+        Returns a streamlined chat session representation.
+        """
+        return {
+            "id": self.id,
+            "title": self.title,
+        }
 
 
 def text_search(keyword: str, results: int, source: bool = True, note: bool = True):
